@@ -5,16 +5,19 @@ import { useChat } from "ai/react";
 import { Button } from "@/components/ui/button";
 import { ModelSelector } from "./modal-selector";
 import { WelcomeScreen } from "./welcome-screen";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AutoResizeTextarea } from "./autoresize-textarea";
 import type React from "react";
 import { ArrowRightIcon } from "@/assets/icons";
 import Image from "next/image";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export function ChatForm({ className, ...props }: React.ComponentProps<"div">) {
   const [selectedModel, setSelectedModel] = useState("openai");
   const { messages, input, setInput, append, isLoading } = useChat({
-    api: "/api/chat",
+    api: "http://localhost:3000",
+    streamProtocol: "text",
   });
 
   const scrollToBottomRef = useRef<HTMLDivElement>(null);
@@ -56,15 +59,15 @@ export function ChatForm({ className, ...props }: React.ComponentProps<"div">) {
       message.role === "assistant" && isLoading && isLastMessage;
 
     return (
-      <div
+      <pre
         className={cn(
-          "rounded-2xl p-3 max-w-[70%] text-[#363853] text-[14px] font-medium leading-[24px]",
+          "rounded-2xl p-3 max-w-[70%] text-[#363853] text-[14px] font-medium leading-[24px] prose",
           message.role === "user" ? "bg-[#F3F3F3]" : "p-0"
         )}
       >
         {message.content}
         {isAssistantAndLoading && loader}
-      </div>
+      </pre>
     );
   };
 
